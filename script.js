@@ -1,7 +1,7 @@
 const clases = [
-    { clase: 'A', rango: [1, 126], mascara: '255.0.0.0', cidr: '/8', ips: 256 * 256 * 256, conf: 256 * 256 * 256 - 2 },
-    { clase: 'B', rango: [128, 191], mascara: '255.255.0.0', cidr: '/16', ips: 256 * 256, conf: 256 * 256 - 2 },
-    { clase: 'C', rango: [192, 223], mascara: '255.255.255.0', cidr: '/24', ips: 256, conf: 254 },
+    { clase: 'A', rango: [1, 126], mascara: '255.0.0.0', cidr: '/8', ips: 256 * 256 * 256, conf: 256 * 256 * 256 - 2,nroIpDistintas: 127 },
+    { clase: 'B', rango: [128, 191], mascara: '255.255.0.0', cidr: '/16', ips: 256 * 256, conf: 256 * 256 - 2,nroIpDistintas: 64*256  },
+    { clase: 'C', rango: [192, 223], mascara: '255.255.255.0', cidr: '/24', ips: 256, conf: 254, nroIpDistintas: 32*256*256  },
     { clase: 'D', rango: [224, 239], mascara: 'Multicast', cidr: '', ips: '-', conf: '-' },
     { clase: 'E', rango: [240, 255], mascara: 'Reservada', cidr: '', ips: '-', conf: '-' }
 ];
@@ -21,7 +21,8 @@ function analizarIP(ip) {
         idRed: '',
         idHost: '',
         ipRed: '',
-        broadcast: ''
+        broadcast: '',
+        nroIpDistintas: clase.nroIpDistintas,
     };
 
     if (clase.clase === 'A') {
@@ -66,11 +67,10 @@ function agregarCache(ip) {
     // Buscar si ya existe la IP en cache
     const idx = cache.findIndex(item => item.ip === ip);
     if (idx !== -1) {
-        // Si existe, eliminarla
         cache.splice(idx, 1);
     }
     cache.unshift({ ip, hora: horaActual() });
-    // Limitar a 10 consultas recientes
+
     cache = cache.slice(0, 10);
     setCache(cache);
 }
@@ -105,7 +105,7 @@ function mostrarDetalles(ip) {
     if (datos) {
         resultados.innerHTML = `
             <div class="p-5 bg-[#28293b]/10 rounded-md shadow-lg border border-gray-800 ">
-                <h2 class="font-bold text-lg mb-2">Clase ${datos.clase}</h2>
+                <h2 class="font-bold text-lg mb-2">Clase <span class="text-2xl text-blue-500"> ${datos.clase}</span></h2>
                 <div><b>IP de red:</b> ${datos.ipRed}</div>
                 <div><b>IP de host:</b> ${datos.ipHost}</div>
                 <div><b>ID de red:</b> ${datos.idRed}</div>
@@ -114,6 +114,7 @@ function mostrarDetalles(ip) {
                 <div><b>Nro de IPs:</b> ${datos.nroIPs}</div>
                 <div><b>Nro de IPs configurables:</b> ${datos.nroIPsConf}</div>
                 <div><b>Máscara:</b> ${datos.mascara}</div>
+                     <div><b>Ips distintas:</b> ${datos.nroIpDistintas}</div>
             </div>
         `;
     } else {
@@ -121,7 +122,6 @@ function mostrarDetalles(ip) {
     }
 }
 
-// Evento submit del formulario
 document.getElementById('ipForm').addEventListener('submit', function (e) {
     e.preventDefault();
     const ip = document.getElementById('ipInput').value.trim();
