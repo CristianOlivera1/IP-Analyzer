@@ -1,6 +1,6 @@
 # IP-Analyzer
 
-IP-Analyzer es una aplicación web que permite analizar direcciones IP y obtener información relevante sobre redes de diferentes clases.
+IP-Analyzer es una página web que permite analizar direcciones IP y obtener información relevante sobre redes de diferentes clases.
 
 ![postspark_export_2025-05-27_11-01-43](https://github.com/user-attachments/assets/f7371ec5-3cbf-4a50-818c-487585421bc5)
 
